@@ -1,0 +1,7 @@
+[MASTER]
+disable=
+    C0116, # missing-function-docstring
+    R0801, # Similar lines in 2 files
+
+[FORMAT]
+max-line-length=240
