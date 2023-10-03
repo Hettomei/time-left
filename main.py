@@ -15,22 +15,32 @@ from datetime import datetime, timedelta
 import sys
 
 
-def to_datetime(_str):
+def to_datetime(_str, pattern):
     try:
-        return datetime.strptime(_str, "%Hh%M")
+        return datetime.strptime(_str, pattern)
     except ValueError:
-        try:
-            return datetime.strptime(_str, "%H:%M")
-        except ValueError:
-            return datetime.strptime(_str, "%H")
+        return None
+
+
+def to_datetime_full(_str):
+    result = (
+        to_datetime(_str, "%Hh%M")
+        or to_datetime(_str, "%H:%M")
+        or to_datetime(_str, "%H %M")
+        or to_datetime(_str, "%H")
+    )
+    if not result:
+        raise ValueError(f"No date for {_str}")
+
+    return result
 
 
 def add_date(date_list):
     debut = input("debut : ")
-    d_debut = to_datetime(debut)
+    d_debut = to_datetime_full(debut)
 
     fin = input("fin   : ")
-    d_fin = to_datetime(fin)
+    d_fin = to_datetime_full(fin)
     date_list.append([d_debut, d_fin])
 
 
@@ -47,7 +57,7 @@ def show_diff(date_list):
 
 
 def run():
-    print("exemple : 8h40 9:00 16h40 16")
+    print("exemple : 8h40 9:00 16h40 16 ou 9 15 pour 9h15")
     date_list = []
 
     while True:
