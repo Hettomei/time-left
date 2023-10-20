@@ -23,18 +23,21 @@ def to_datetime(_str, pattern):
 
 
 def to_datetime_full(_str):
+    result = None
     str_time = _str.strip()
-    result = (
-        to_datetime(str_time, "%Hh%M")
-        or to_datetime(str_time, "%H:%M")
-        or to_datetime(str_time, "%H %M")
-        or to_datetime(str_time, "%H")
-        or to_datetime(str_time, "%Hh")
-    )
-    if not result:
-        raise ValueError(f"No date for {str_time}")
+    for pattern in [
+        "%Hh%M",
+        "%H:%M",
+        "%H %M",
+        "%H",
+        "%Hh",
+    ]:
+        result = to_datetime(str_time, pattern)
+        if result:
+            return result
 
-    return result
+    raise ValueError(f"No date for {str_time}")
+
 
 
 def add_date(date_list):
