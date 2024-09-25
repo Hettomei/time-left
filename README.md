@@ -1,3 +1,14 @@
+# install
+
+python > 3.10
+python -m pip install -r requirements.tx
+
+# test
+
+python -m pytest
+
+# launch
+
 ```
 python main.py
 ```

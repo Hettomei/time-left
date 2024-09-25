@@ -63,8 +63,12 @@ def to_datetime_full(_str):
     raise ValueError(f"No date for {str_time}")
 
 
-def add_date(date_list):
+def ask_date(date_list):
     debut = input("debut : ")
+    if debut.strip() == "d":
+        date_list.pop()
+        return
+
     d_debut = to_datetime_full(debut)
 
     fin = input("fin   : ")
@@ -94,7 +98,7 @@ def diff_to_string(date_list):
 def ask_time(date_list):
     while True:
         print()
-        add_date(date_list)
+        ask_date(date_list)
         print()
         print(diff_to_string(date_list))
 
@@ -121,7 +125,9 @@ def append_to(params, date_list):
 
 def run(args):
     params = parse_args(args)
-    print("exemple : 8h40 - 9:00 - 16h40 - 16 - 9 15 - pour 9h15")
+    print("exemple :")
+    print("8h40 - 9:00 - 16h40 - 16 - 9 15 - pour 9h15")
+    print("exemple : d - supprime la derniere ligne")
     date_list = []
 
     try:
