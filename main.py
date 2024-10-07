@@ -105,6 +105,13 @@ def ask_time(date_list):
 
 def append_to(params, date_list):
     if not params.append_to:
+        print()
+        print("Nothing saved")
+        return None
+
+    if not date_list:
+        print()
+        print("Nothing saved")
         return None
 
     with open(params.append_to, "a", encoding="utf-8", newline=SEPARATOR) as myfile:
