@@ -127,6 +127,8 @@ def append_to(params, date_list):
             ]
         )
 
+    print()
+    print(f"Saved to {params.append_to}")
     return True
 
 
