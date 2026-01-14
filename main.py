@@ -1,15 +1,5 @@
 """
 Prend des input
-
-ex:
-debut : 8h32
-fin   : 12h45
-08h32 - 12h45  4:13:00   4:13:00
-
-debut : 13h45
-fin   : 18
-08h32 - 12h45  4:13:00   4:13:00
-13h45 - 18h00  4:15:00   8:28:00
 """
 
 import argparse
@@ -66,7 +56,10 @@ def to_datetime_full(_str):
 def ask_date(date_list):
     debut = input("debut : ")
     if debut.strip() == "d":
-        date_list.pop()
+        if len(date_list) > 0:
+            date_list.pop()
+        else:
+            print("nothing to delete")
         return
 
     d_debut = to_datetime_full(debut)
@@ -98,7 +91,10 @@ def diff_to_string(date_list):
 def ask_time(date_list):
     while True:
         print()
-        ask_date(date_list)
+        try:
+            ask_date(date_list)
+        except ValueError as e:
+            print(e)
         print()
         print(diff_to_string(date_list))
 
@@ -134,9 +130,8 @@ def append_to(params, date_list):
 
 def run(args):
     params = parse_args(args)
-    print("exemple :")
-    print("8h40 - 9:00 - 16h40 - 16 - 9 15 - pour 9h15")
-    print("exemple : d - supprime la derniere ligne")
+    print("exemple de valeurs possible : 8h40 , 8:40 , 8 40, 8")
+    print("d : supprime la derniere ligne")
     date_list = []
 
     try:
