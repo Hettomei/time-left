@@ -11,6 +11,8 @@ import sys
 SEPARATOR = "\n"
 # SEPARATOR = "\r\n"
 
+class UserException(Exception):
+    pass
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
@@ -50,16 +52,19 @@ def to_datetime_full(_str):
         if result:
             return result
 
-    raise ValueError(f"No date for {str_time}")
+    raise UserException(f"No date for {str_time}")
 
 
-def ask_date(date_list):
+def read_input(date_list):
     debut = input("debut : ")
     if debut.strip() == "d":
         if len(date_list) > 0:
             date_list.pop()
         else:
             print("nothing to delete")
+        return
+    elif debut.strip() == "h":
+        help_screen()
         return
 
     d_debut = to_datetime_full(debut)
@@ -88,15 +93,15 @@ def diff_to_string(date_list):
     return SEPARATOR.join(diff_to_list(date_list))
 
 
-def ask_time(date_list):
+def main_loop(date_list):
     while True:
-        print()
         try:
-            ask_date(date_list)
-        except ValueError as e:
-            print(e)
+            read_input(date_list)
+        except UserException as e:
+            print(f"ERROR {e}")
         print()
         print(diff_to_string(date_list))
+        print()
 
 
 def append_to(params, date_list):
@@ -128,14 +133,21 @@ def append_to(params, date_list):
     return True
 
 
+def help_screen():
+    print("=============================")
+    print("Exemple de valeurs possible :")
+    print("8h40 , 8:40 , 8 40, 8")
+    print("h : affiche l'aide")
+    print("d : supprime la derniere ligne")
+    print("=============================")
+
 def run(args):
     params = parse_args(args)
-    print("exemple de valeurs possible : 8h40 , 8:40 , 8 40, 8")
-    print("d : supprime la derniere ligne")
+    print("h : affiche l'aide")
     date_list = []
 
     try:
-        ask_time(date_list)
+        main_loop(date_list)
     except KeyboardInterrupt:
         append_to(params, date_list)
         sys.exit(0)
