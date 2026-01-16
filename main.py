@@ -170,7 +170,6 @@ def run(args):
         main_loop(date_list)
     except KeyboardInterrupt:
         append_to(params, date_list)
-        sys.exit(0)
 
 
 if __name__ == "__main__":
