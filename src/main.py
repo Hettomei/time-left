@@ -63,12 +63,20 @@ def text_to_datetime(_str: str) -> datetime:
 
 def read_input(user_data: UserData):
     debut = input("debut : ")
+    # d: delete
     if debut.strip() == "d":
         if not user_data.delete_last():
             print("nothing to delete")
         return
+    # h: help
     elif debut.strip() == "h":
         help_screen()
+        return
+    # cd: change date
+    elif debut.strip() == "cd":
+        relative = input("nouvelle date relative  (-1, -2 ...) : ")
+        user_data.change_date(relative.strip())
+        print(user_data)
         return
 
     d_debut = text_to_datetime(debut)
@@ -93,8 +101,9 @@ def help_screen() -> None:
     print("=============================")
     print("Exemple de valeurs possible :")
     print("8h40 , 8:40 , 8 40, 8")
-    print("h : affiche l'aide")
-    print("d : supprime la derniere ligne")
+    print("h  : affiche l'aide")
+    print("d  : supprime la derniere ligne")
+    print("cd : change la date relative à la date du jour. ex: -1")
     print("=============================")
 
 

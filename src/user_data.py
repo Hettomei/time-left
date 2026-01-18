@@ -32,7 +32,7 @@ class UserData:
         self.date_list: list[list[datetime]] = []
 
     def __str__(self) -> str:
-        return f"UserData[{self.current_date}]"
+        return f"UserData[{self.current_date}, file: {self.append_to}, date_list: {len(self.date_list)}]"
 
     def delete_last(self) -> bool:
         if len(self.date_list) > 0:
@@ -76,7 +76,7 @@ class UserData:
             myfile.writelines(
                 [
                     SEPARATOR,
-                    datetime.strftime(datetime.now(), "# %Y-%m-%d %A"),
+                    self.current_date.strftime("# %Y-%m-%d %A"),
                     SEPARATOR,
                     SEPARATOR,
                     self.diff_to_string(),
@@ -87,3 +87,7 @@ class UserData:
 
         print()
         print(f"Saved to {self.append_to}")
+
+    def change_date(self, relative: str) -> None:
+        a = int(relative)
+        self.current_date = self.current_date + timedelta(days=a)
