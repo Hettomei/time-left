@@ -4,16 +4,14 @@ Prend des input
 
 import argparse
 from datetime import datetime, timedelta
+from program_exception import UserException
+from user_data import UserData
 import sys
 
 # import os
 # SEPARATOR = os.linesep
-SEPARATOR = "\n"
+SEPARATOR: str = "\n"
 # SEPARATOR = "\r\n"
-
-
-class UserException(Exception):
-    pass
 
 
 def parse_args(args):
@@ -33,14 +31,14 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def to_datetime(_str, pattern):
+def to_datetime(_str: str, pattern: str) -> datetime | None:
     try:
         return datetime.strptime(_str, pattern)
     except ValueError:
         return None
 
 
-def text_to_datetime(_str):
+def text_to_datetime(_str: str) -> datetime | None:
     result = None
     str_time = _str.strip()
     for pattern in [
@@ -82,11 +80,11 @@ def read_input(date_list):
     date_list.append([d_debut, d_fin])
 
 
-def format_datetime(_datetime):
+def format_datetime(_datetime: datetime) -> str:
     return datetime.strftime(_datetime, "%H:%M:%S")
 
 
-def format_timedelta(_timedelta):
+def format_timedelta(_timedelta: timedelta) -> str:
     """
     si timedelta(hours=1)  => "01:00:00"
     si timedelta(hours=10) => "10:00:00"
@@ -120,7 +118,7 @@ def diff_to_list(date_list):
     return lines
 
 
-def diff_to_string(date_list):
+def diff_to_string(date_list) -> str:
     return SEPARATOR.join(diff_to_list(date_list))
 
 
@@ -135,16 +133,16 @@ def main_loop(date_list):
         print()
 
 
-def append_to(params, date_list):
+def append_to(params, date_list) -> None:
     if not params.append_to:
         print()
         print("Nothing saved")
-        return None
+        return
 
     if not date_list:
         print()
         print("Nothing saved")
-        return None
+        return
 
     with open(params.append_to, "a", encoding="utf-8", newline=SEPARATOR) as myfile:
         myfile.writelines(
@@ -161,10 +159,9 @@ def append_to(params, date_list):
 
     print()
     print(f"Saved to {params.append_to}")
-    return True
 
 
-def help_screen():
+def help_screen() -> None:
     print("=============================")
     print("Exemple de valeurs possible :")
     print("8h40 , 8:40 , 8 40, 8")
@@ -173,10 +170,10 @@ def help_screen():
     print("=============================")
 
 
-def run(args):
+def run(args) -> None:
     params = parse_args(args)
     print("h : affiche l'aide")
-    date_list = []
+    date_list: list[datetime] = []
 
     try:
         main_loop(date_list)
