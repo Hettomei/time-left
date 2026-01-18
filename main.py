@@ -42,11 +42,17 @@ def to_datetime_full(_str):
     result = None
     str_time = _str.strip()
     for pattern in [
+            "%Hh%Mm%Ss",
+            "%H:%M:%S",
+            "%H %M %S",
+            "%Hh%Mm",
             "%Hh%M",
             "%H:%M",
             "%H %M",
             "%H",
             "%Hh",
+            "%Mm",
+            "%Ss",
             ]:
         result = to_datetime(str_time, pattern)
         if result:
@@ -75,7 +81,7 @@ def read_input(date_list):
 
 
 def hour_sec(_datetime):
-    return datetime.strftime(_datetime, "%Hh%M")
+    return datetime.strftime(_datetime, "%H:%M:%S")
 
 def format_timedelta(_timedelta):
     """
