@@ -1,6 +1,7 @@
 """
 Test
 """
+
 from datetime import datetime, timedelta
 
 import main
@@ -29,15 +30,15 @@ def test_full_integration():
     date_list.append([t("1"), t("4")])
 
     assert main.diff_to_list(date_list) == [
-            '00h00 - 00h01  00:01:00  00:01:00',
-            '01h00 - 01h59  00:59:00  01:00:00',
-            '13h35 - 13h35  1 day, 00:00:00  1 day, 01:00:00',
-            '01h00 - 01h03  00:03:00  1 day, 01:03:00',
-            '08h00 - 18h07  10:07:00  1 day, 11:10:00',
-            '07h30 - 18h20  10:50:00  1 day, 22:00:00',
-            '01h00 - 04h00  03:00:00  2 days, 01:00:00',
-            '01h00 - 04h00  03:00:00  2 days, 04:00:00',
-            ]
+        "00h00 - 00h01  00:01:00  00:01:00",
+        "01h00 - 01h59  00:59:00  01:00:00",
+        "13h35 - 13h35  1 day, 00:00:00  1 day, 01:00:00",
+        "01h00 - 01h03  00:03:00  1 day, 01:03:00",
+        "08h00 - 18h07  10:07:00  1 day, 11:10:00",
+        "07h30 - 18h20  10:50:00  1 day, 22:00:00",
+        "01h00 - 04h00  03:00:00  2 days, 01:00:00",
+        "01h00 - 04h00  03:00:00  2 days, 04:00:00",
+    ]
 
 
 def test_full_integration_v2():
@@ -46,11 +47,12 @@ def test_full_integration_v2():
     date_list.append([t("18"), t("1")])
     date_list.append([t("15"), t("8")])
     assert main.diff_to_list(date_list) == [
-            '18h00 - 01h00  07:00:00  07:00:00',
-            '15h00 - 08h00  17:00:00  1 day, 00:00:00',
-            ]
+        "18h00 - 01h00  07:00:00  07:00:00",
+        "15h00 - 08h00  17:00:00  1 day, 00:00:00",
+    ]
+
 
 def test_format_timedelta():
-    assert main.format_timedelta(timedelta(hours=1))  == "01:00:00"
+    assert main.format_timedelta(timedelta(hours=1)) == "01:00:00"
     assert main.format_timedelta(timedelta(hours=10)) == "10:00:00"
     assert main.format_timedelta(timedelta(hours=25)) == "1 day, 01:00:00"

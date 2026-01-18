@@ -11,22 +11,24 @@ import sys
 SEPARATOR = "\n"
 # SEPARATOR = "\r\n"
 
+
 class UserException(Exception):
     pass
 
+
 def parse_args(args):
     parser = argparse.ArgumentParser(
-            description="Affiche un chrono",
-            )
+        description="Affiche un chrono",
+    )
 
     parser.add_argument(
-            "--append-to",
-            "-a",
-            dest="append_to",
-            default="",
-            help="Au moment de quitter, ecris le resultat à la fin du fichier",
-            metavar="/d/code/file.txt",
-            )
+        "--append-to",
+        "-a",
+        dest="append_to",
+        default="",
+        help="Au moment de quitter, ecris le resultat à la fin du fichier",
+        metavar="/d/code/file.txt",
+    )
 
     return parser.parse_args(args)
 
@@ -42,18 +44,18 @@ def to_datetime_full(_str):
     result = None
     str_time = _str.strip()
     for pattern in [
-            "%Hh%Mm%Ss",
-            "%H:%M:%S",
-            "%H %M %S",
-            "%Hh%Mm",
-            "%Hh%M",
-            "%H:%M",
-            "%H %M",
-            "%H",
-            "%Hh",
-            "%Mm",
-            "%Ss",
-            ]:
+        "%Hh%Mm%Ss",
+        "%H:%M:%S",
+        "%H %M %S",
+        "%Hh%Mm",
+        "%Hh%M",
+        "%H:%M",
+        "%H %M",
+        "%H",
+        "%Hh",
+        "%Mm",
+        "%Ss",
+    ]:
         result = to_datetime(str_time, pattern)
         if result:
             return result
@@ -83,6 +85,7 @@ def read_input(date_list):
 def hour_sec(_datetime):
     return datetime.strftime(_datetime, "%H:%M:%S")
 
+
 def format_timedelta(_timedelta):
     """
     si timedelta(hours=1)  => "01:00:00"
@@ -110,7 +113,9 @@ def diff_to_list(date_list):
             tt2 = tt2 + timedelta(days=1)
         local = tt2 - tt1
         total = total + local
-        lines.append(f"{hour_sec(tt1)} - {hour_sec(tt2)}  {format_timedelta(local)}  {format_timedelta(total)}")
+        lines.append(
+            f"{hour_sec(tt1)} - {hour_sec(tt2)}  {format_timedelta(local)}  {format_timedelta(total)}"
+        )
 
     return lines
 
@@ -143,16 +148,16 @@ def append_to(params, date_list):
 
     with open(params.append_to, "a", encoding="utf-8", newline=SEPARATOR) as myfile:
         myfile.writelines(
-                [
-                    SEPARATOR,
-                    datetime.strftime(datetime.now(), "# %Y-%m-%d %A"),
-                    SEPARATOR,
-                    SEPARATOR,
-                    diff_to_string(date_list),
-                    SEPARATOR,
-                    SEPARATOR,
-                    ]
-                )
+            [
+                SEPARATOR,
+                datetime.strftime(datetime.now(), "# %Y-%m-%d %A"),
+                SEPARATOR,
+                SEPARATOR,
+                diff_to_string(date_list),
+                SEPARATOR,
+                SEPARATOR,
+            ]
+        )
 
     print()
     print(f"Saved to {params.append_to}")
@@ -166,6 +171,7 @@ def help_screen():
     print("h : affiche l'aide")
     print("d : supprime la derniere ligne")
     print("=============================")
+
 
 def run(args):
     params = parse_args(args)

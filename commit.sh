@@ -1,3 +1,3 @@
 
-python -m black
-python -m pytest -vvv
+python -m black src
+python -m pytest -vvv src
