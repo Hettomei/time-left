@@ -70,7 +70,7 @@ def read_input(user_data: UserData):
         return
     # h: help
     elif debut.strip() == "h":
-        help_screen()
+        help_screen(user_data)
         return
     # cd: change date
     elif debut.strip() == "cd":
@@ -97,13 +97,14 @@ def main_loop(user_data: UserData):
         print()
 
 
-def help_screen() -> None:
+def help_screen(user_data: UserData) -> None:
     print("=============================")
     print("Exemple de valeurs possible :")
     print("8h40 , 8:40 , 8 40, 8")
     print("h  : affiche l'aide")
     print("d  : supprime la derniere ligne")
     print("cd : change la date relative à la date du jour. ex: -1")
+    print(f"{user_data}")
     print("=============================")
 
 
