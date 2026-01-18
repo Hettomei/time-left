@@ -99,7 +99,7 @@ def diff_to_list(date_list):
     total = timedelta()
     lines = []
     for tt1, tt2 in date_list:
-        if tt2 < tt1:
+        if tt2 <= tt1:
             # On ajoute 24h
             tt2 = tt2 + timedelta(days=1)
         local = tt2 - tt1
