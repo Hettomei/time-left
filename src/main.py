@@ -40,7 +40,7 @@ def to_datetime(_str, pattern):
         return None
 
 
-def to_datetime_full(_str):
+def text_to_datetime(_str):
     result = None
     str_time = _str.strip()
     for pattern in [
@@ -75,14 +75,14 @@ def read_input(date_list):
         help_screen()
         return
 
-    d_debut = to_datetime_full(debut)
+    d_debut = text_to_datetime(debut)
 
     fin = input("fin   : ")
-    d_fin = to_datetime_full(fin)
+    d_fin = text_to_datetime(fin)
     date_list.append([d_debut, d_fin])
 
 
-def hour_sec(_datetime):
+def format_datetime(_datetime):
     return datetime.strftime(_datetime, "%H:%M:%S")
 
 
@@ -114,7 +114,7 @@ def diff_to_list(date_list):
         local = tt2 - tt1
         total = total + local
         lines.append(
-            f"{hour_sec(tt1)} - {hour_sec(tt2)}  {format_timedelta(local)}  {format_timedelta(total)}"
+            f"{format_datetime(tt1)} - {format_datetime(tt2)}  {format_timedelta(local)}  {format_timedelta(total)}"
         )
 
     return lines
