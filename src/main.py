@@ -38,7 +38,7 @@ def to_datetime(_str: str, pattern: str) -> datetime | None:
         return None
 
 
-def text_to_datetime(_str: str) -> datetime | None:
+def text_to_datetime(_str: str) -> datetime:
     result = None
     str_time = _str.strip()
     for pattern in [
@@ -61,12 +61,10 @@ def text_to_datetime(_str: str) -> datetime | None:
     raise UserException(f"No date for {str_time}")
 
 
-def read_input(date_list):
+def read_input(user_data: UserData):
     debut = input("debut : ")
     if debut.strip() == "d":
-        if len(date_list) > 0:
-            date_list.pop()
-        else:
+        if not user_data.delete_last():
             print("nothing to delete")
         return
     elif debut.strip() == "h":
@@ -77,88 +75,18 @@ def read_input(date_list):
 
     fin = input("fin   : ")
     d_fin = text_to_datetime(fin)
-    date_list.append([d_debut, d_fin])
+    user_data.append(d_debut, d_fin)
 
 
-def format_datetime(_datetime: datetime) -> str:
-    return datetime.strftime(_datetime, "%H:%M:%S")
-
-
-def format_timedelta(_timedelta: timedelta) -> str:
-    """
-    si timedelta(hours=1)  => "01:00:00"
-    si timedelta(hours=10) => "10:00:00"
-    si timedelta(days=1, hours=1) => "1 day, 01:00:00"
-    """
-    if len(str(_timedelta)) < 8:
-        return f"0{_timedelta}"
-    if _timedelta.days > 0:
-        a = str(_timedelta).split(", ")
-        if len(str(a[1])) < 8:
-            a[1] = f"0{a[1]}"
-
-        return ", ".join(a)
-
-    return str(_timedelta)
-
-
-def diff_to_list(date_list):
-    total = timedelta()
-    lines = []
-    for tt1, tt2 in date_list:
-        if tt2 <= tt1:
-            # On ajoute 24h
-            tt2 = tt2 + timedelta(days=1)
-        local = tt2 - tt1
-        total = total + local
-        lines.append(
-            f"{format_datetime(tt1)} - {format_datetime(tt2)}  {format_timedelta(local)}  {format_timedelta(total)}"
-        )
-
-    return lines
-
-
-def diff_to_string(date_list) -> str:
-    return SEPARATOR.join(diff_to_list(date_list))
-
-
-def main_loop(date_list):
+def main_loop(user_data: UserData):
     while True:
         try:
-            read_input(date_list)
+            read_input(user_data)
         except UserException as e:
             print(f"ERROR {e}")
         print()
-        print(diff_to_string(date_list))
+        print(user_data.diff_to_string())
         print()
-
-
-def append_to(params, date_list) -> None:
-    if not params.append_to:
-        print()
-        print("Nothing saved")
-        return
-
-    if not date_list:
-        print()
-        print("Nothing saved")
-        return
-
-    with open(params.append_to, "a", encoding="utf-8", newline=SEPARATOR) as myfile:
-        myfile.writelines(
-            [
-                SEPARATOR,
-                datetime.strftime(datetime.now(), "# %Y-%m-%d %A"),
-                SEPARATOR,
-                SEPARATOR,
-                diff_to_string(date_list),
-                SEPARATOR,
-                SEPARATOR,
-            ]
-        )
-
-    print()
-    print(f"Saved to {params.append_to}")
 
 
 def help_screen() -> None:
@@ -171,14 +99,15 @@ def help_screen() -> None:
 
 
 def run(args) -> None:
-    params = parse_args(args)
     print("h : affiche l'aide")
-    date_list: list[datetime] = []
+
+    params = parse_args(args)
+    user_data = UserData(params.append_to)
 
     try:
-        main_loop(date_list)
+        main_loop(user_data)
     except KeyboardInterrupt:
-        append_to(params, date_list)
+        user_data.write_in_file()
 
 
 if __name__ == "__main__":
