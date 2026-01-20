@@ -8,11 +8,6 @@ from program_exception import UserException, ForceQuitException
 from user_data import UserData
 import sys
 
-# import os
-# SEPARATOR = os.linesep
-SEPARATOR: str = "\n"
-# SEPARATOR = "\r\n"
-
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
@@ -61,42 +56,42 @@ def text_to_datetime(_str: str) -> datetime:
     raise UserException(f"No date for {str_time}")
 
 
-def read_input(user_data: UserData):
-    debut = input("debut : ")
+def read_input(user_data: UserData) -> None:
+    debut = input("command : ").strip()
     # d: delete
-    if debut.strip() == "d":
+    if debut == "d":
         if not user_data.delete_last():
             print("nothing to delete")
         return
     # h: help
-    elif debut.strip() == "h":
+    elif debut == "h":
         help_screen(user_data)
         return
     # cd: change date
-    elif debut.strip() == "cd":
-        relative = input("nouvelle date relative  (-1, -2 ...) : ")
-        user_data.change_date(relative.strip())
+    elif debut == "cd":
+        relative = input("nouvelle date relative  (-1, -2 ...) : ").strip()
+        user_data.change_date(relative)
         print(user_data)
         return
     # q: quit
-    elif debut.strip() == "q":
+    elif debut == "q":
         raise ForceQuitException("q")
         return
-
-    d_debut = text_to_datetime(debut)
-
-    fin = input("fin   : ")
-    d_fin = text_to_datetime(fin)
-    user_data.append(d_debut, d_fin)
+    else:
+        d_debut = text_to_datetime(debut)
+        fin = input("fin   : ")
+        d_fin = text_to_datetime(fin)
+        user_data.append(d_debut, d_fin)
 
 
 def main_loop(user_data: UserData) -> None:
+    print("h : affiche l'aide")
     while True:
         try:
             read_input(user_data)
         except UserException as e:
             print(f"ERROR {e}")
-        print()
+
         print(user_data.diff_to_string())
         print()
 
@@ -121,8 +116,6 @@ data
 
 
 def run(args) -> None:
-    print("h : affiche l'aide")
-
     params = parse_args(args)
     user_data = UserData(params.append_to)
 
