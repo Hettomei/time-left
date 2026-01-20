@@ -4,7 +4,7 @@ Prend des input
 
 import argparse
 from datetime import datetime, timedelta
-from program_exception import UserException
+from program_exception import UserException, ForceQuitException
 from user_data import UserData
 import sys
 
@@ -78,6 +78,10 @@ def read_input(user_data: UserData):
         user_data.change_date(relative.strip())
         print(user_data)
         return
+    # q: quit
+    elif debut.strip() == "q":
+        raise ForceQuitException("q")
+        return
 
     d_debut = text_to_datetime(debut)
 
@@ -86,7 +90,7 @@ def read_input(user_data: UserData):
     user_data.append(d_debut, d_fin)
 
 
-def main_loop(user_data: UserData):
+def main_loop(user_data: UserData) -> None:
     while True:
         try:
             read_input(user_data)
@@ -98,14 +102,22 @@ def main_loop(user_data: UserData):
 
 
 def help_screen(user_data: UserData) -> None:
-    print("=============================")
-    print("Exemple de valeurs possible :")
-    print("8h40 , 8:40 , 8 40, 8")
-    print("h  : affiche l'aide")
-    print("d  : supprime la derniere ligne")
-    print("cd : change la date relative à la date du jour. ex: -1")
-    print(f"{user_data}")
-    print("=============================")
+    print(f"""
+commandes
+---------
+h   : affiche l'aide
+d   : supprime la derniere ligne
+cd  : change la date relative à la date du jour. ex: -1
+q
+C-c : quitte l'app
+
+valeurs
+-------
+8h40, 8:40, 8 40, 8, 8m, 40s
+
+data
+----
+{user_data}""")
 
 
 def run(args) -> None:
@@ -116,7 +128,7 @@ def run(args) -> None:
 
     try:
         main_loop(user_data)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ForceQuitException):
         user_data.write_in_file()
 
 
