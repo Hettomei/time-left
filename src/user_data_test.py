@@ -55,3 +55,8 @@ def test_diff_to_list_v2():
         "18:00:00 - 01:00:00  07:00:00  07:00:00",
         "15:00:00 - 08:00:00  17:00:00  1 day, 00:00:00",
     ]
+
+
+def test_load_file_when_no_file():
+    user_data = UserData()
+    assert user_data.load_file() == "pas de fichier"

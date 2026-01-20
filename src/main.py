@@ -6,6 +6,7 @@ import argparse
 from datetime import datetime, timedelta
 from program_exception import UserException, ForceQuitException
 from user_data import UserData
+from utils import text_to_datetime
 import sys
 
 
@@ -26,57 +27,27 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def to_datetime(_str: str, pattern: str) -> datetime | None:
-    try:
-        return datetime.strptime(_str, pattern)
-    except ValueError:
-        return None
-
-
-def text_to_datetime(_str: str) -> datetime:
-    result = None
-    str_time = _str.strip()
-    for pattern in [
-        "%Hh%Mm%Ss",
-        "%H:%M:%S",
-        "%H %M %S",
-        "%Hh%Mm",
-        "%Hh%M",
-        "%H:%M",
-        "%H %M",
-        "%H",
-        "%Hh",
-        "%Mm",
-        "%Ss",
-    ]:
-        result = to_datetime(str_time, pattern)
-        if result:
-            return result
-
-    raise UserException(f"No date for {str_time}")
-
-
 def read_input(user_data: UserData) -> None:
     debut = input("command : ").strip()
     # d: delete
     if debut == "d":
         if not user_data.delete_last():
             print("nothing to delete")
-        return
     # h: help
     elif debut == "h":
         help_screen(user_data)
-        return
     # cd: change date
     elif debut == "cd":
         relative = input("nouvelle date relative  (-1, -2 ...) : ").strip()
         user_data.change_date(relative)
         print(user_data)
-        return
     # q: quit
     elif debut == "q":
         raise ForceQuitException("q")
-        return
+    # l: load file
+    elif debut == "l":
+        user_data.load_file()
+    # else: parse au mieux les data pour trouver une date
     else:
         d_debut = text_to_datetime(debut)
         fin = input("fin   : ")
@@ -105,6 +76,7 @@ d   : supprime la derniere ligne
 cd  : change la date relative à la date du jour. ex: -1
 q
 C-c : quitte l'app
+l   : load file
 
 valeurs
 -------

@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from load_file import load_file
 
 SEPARATOR: str = "\n"
 
@@ -91,3 +92,14 @@ class UserData:
     def change_date(self, relative: str) -> None:
         a = int(relative)
         self.current_date = self.current_date + timedelta(days=a)
+
+    def load_file(self) -> str:
+        """
+        si pas de fichier :
+            afficher "pas de fichier", ne rien faire
+        si fichier et data chargeable :
+            effacer le contenu de date_list puis le remplacer
+        si fichier et data non chargeable :
+            affiche le probleme
+        """
+        return load_file(self.append_to)
