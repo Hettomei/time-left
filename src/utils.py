@@ -1,5 +1,5 @@
 from program_exception import UserException
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 
 def to_datetime(_str: str, pattern: str) -> datetime | None:
@@ -11,6 +11,28 @@ def to_datetime(_str: str, pattern: str) -> datetime | None:
 
 def format_current_date(current_date: date) -> str:
     return current_date.strftime("# %Y-%m-%d %A")
+
+
+def format_datetime(_datetime: datetime) -> str:
+    return datetime.strftime(_datetime, "%H:%M:%S")
+
+
+def format_timedelta(_timedelta: timedelta) -> str:
+    """
+    si timedelta(hours=1)  => "01:00:00"
+    si timedelta(hours=10) => "10:00:00"
+    si timedelta(days=1, hours=1) => "1 day, 01:00:00"
+    """
+    if len(str(_timedelta)) < 8:
+        return f"0{_timedelta}"
+    if _timedelta.days > 0:
+        a = str(_timedelta).split(", ")
+        if len(str(a[1])) < 8:
+            a[1] = f"0{a[1]}"
+
+        return ", ".join(a)
+
+    return str(_timedelta)
 
 
 def text_to_datetime(_str: str) -> datetime:

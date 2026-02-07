@@ -3,7 +3,7 @@ Prend des input
 """
 
 import argparse
-from datetime import datetime, timedelta
+from datetime import timedelta
 from program_exception import UserException, ForceQuitException
 from user_data import UserData
 from utils import text_to_datetime

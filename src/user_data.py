@@ -1,29 +1,9 @@
-from datetime import date, datetime, timedelta
 import file_utils
 
+from datetime import date, datetime, timedelta
+from utils import format_datetime, format_timedelta
+
 SEPARATOR: str = "\n"
-
-
-def format_datetime(_datetime: datetime) -> str:
-    return datetime.strftime(_datetime, "%H:%M:%S")
-
-
-def format_timedelta(_timedelta: timedelta) -> str:
-    """
-    si timedelta(hours=1)  => "01:00:00"
-    si timedelta(hours=10) => "10:00:00"
-    si timedelta(days=1, hours=1) => "1 day, 01:00:00"
-    """
-    if len(str(_timedelta)) < 8:
-        return f"0{_timedelta}"
-    if _timedelta.days > 0:
-        a = str(_timedelta).split(", ")
-        if len(str(a[1])) < 8:
-            a[1] = f"0{a[1]}"
-
-        return ", ".join(a)
-
-    return str(_timedelta)
 
 
 class UserData:
@@ -74,8 +54,6 @@ class UserData:
         lignes existantes
         """
         if not self.append_to:
-            print()
-            print("Nothing saved")
             return
 
         if not self.date_list:
@@ -84,7 +62,6 @@ class UserData:
             return
 
         file_utils.overwrite(self.append_to, self.current_date, self.diff_to_string())
-
         print()
         print(f"Saved to {self.append_to}")
 
