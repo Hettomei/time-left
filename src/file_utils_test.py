@@ -1,22 +1,9 @@
 import tempfile
 from utils import text_to_datetime
-from load_file import load_file
+from file_utils import load_file
 from user_data import UserData
 
 import re
-
-extract_delta = re.compile("^(\d\d:\d\d:\d\d) - (\d\d:\d\d:\d\d)")
-
-
-def test_load_file_when_no_date_match():
-    deltas = extract_delta.match("00:01:00 - 11:22:33  11:22")
-    assert deltas
-    assert deltas.group(1) == "00:01:00"
-    assert deltas.group(2) == "11:22:33"
-
-    assert deltas.group(1) == "00:01:00"
-    assert deltas.group(2) == "11:22:33"
-    pass
 
 
 def test_load_file_when_date_but_no_data():

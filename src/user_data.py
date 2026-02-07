@@ -62,6 +62,10 @@ class UserData:
         return SEPARATOR.join(self.diff_to_list())
 
     def write_in_file(self) -> None:
+        """
+        Si le fichier existe, réécrit à la place des
+        lignes existantes
+        """
         if not self.append_to:
             print()
             print("Nothing saved")
