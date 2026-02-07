@@ -1,5 +1,4 @@
 from datetime import date, datetime, timedelta
-from load_file import load_file
 
 SEPARATOR: str = "\n"
 
@@ -77,11 +76,11 @@ class UserData:
             myfile.writelines(
                 [
                     SEPARATOR,
-                    self.current_date.strftime("# %Y-%m-%d %A"),
+                    SEPARATOR,
+                    self.format_current_date(),
                     SEPARATOR,
                     SEPARATOR,
                     self.diff_to_string(),
-                    SEPARATOR,
                     SEPARATOR,
                 ]
             )
@@ -90,16 +89,14 @@ class UserData:
         print(f"Saved to {self.append_to}")
 
     def change_date(self, relative: str) -> None:
-        a = int(relative)
-        self.current_date = self.current_date + timedelta(days=a)
+        """
+        relative can be -1 to go back one day
+        """
+        change_days = int(relative)
+        self.current_date = self.current_date + timedelta(days=change_days)
 
-    def load_file(self) -> str:
-        """
-        si pas de fichier :
-            afficher "pas de fichier", ne rien faire
-        si fichier et data chargeable :
-            effacer le contenu de date_list puis le remplacer
-        si fichier et data non chargeable :
-            affiche le probleme
-        """
-        return load_file(self.append_to)
+    def clear_list(self) -> None:
+        self.date_list = []
+
+    def format_current_date(self) -> str:
+        return self.current_date.strftime("# %Y-%m-%d %A")

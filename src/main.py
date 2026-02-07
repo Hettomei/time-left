@@ -6,6 +6,7 @@ import argparse
 from datetime import datetime, timedelta
 from program_exception import UserException, ForceQuitException
 from user_data import UserData
+from load_file import load_file
 from utils import text_to_datetime
 import sys
 
@@ -20,15 +21,27 @@ def parse_args(args):
         "-a",
         dest="append_to",
         default="",
-        help="Au moment de quitter, ecris le resultat à la fin du fichier",
+        help="Charge ce fichier, et écrit le resultat à la fin du fichier",
         metavar="/d/code/file.txt",
     )
 
     return parser.parse_args(args)
 
 
+def init_data(user_data: UserData) -> None:
+    if user_data.append_to:
+        load_file(user_data)
+
+        if user_data.date_list:
+            print()
+            print(user_data.diff_to_string())
+            print()
+    else:
+        print("Pas de fichier à charger")
+
+
 def read_input(user_data: UserData) -> None:
-    debut = input("command : ").strip()
+    debut = input("command ou debut : ").strip()
     # d: delete
     if debut == "d":
         if not user_data.delete_last():
@@ -44,9 +57,6 @@ def read_input(user_data: UserData) -> None:
     # q: quit
     elif debut == "q":
         raise ForceQuitException("q")
-    # l: load file
-    elif debut == "l":
-        user_data.load_file()
     # else: parse au mieux les data pour trouver une date
     else:
         d_debut = text_to_datetime(debut)
@@ -90,6 +100,7 @@ data
 def run(args) -> None:
     params = parse_args(args)
     user_data = UserData(params.append_to)
+    init_data(user_data)
 
     try:
         main_loop(user_data)
