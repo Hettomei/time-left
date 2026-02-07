@@ -6,7 +6,6 @@ import argparse
 from datetime import datetime, timedelta
 from program_exception import UserException, ForceQuitException
 from user_data import UserData
-from file_utils import load_file
 from utils import text_to_datetime
 import sys
 
@@ -29,13 +28,12 @@ def parse_args(args):
 
 
 def init_data(user_data: UserData) -> None:
-    if user_data.append_to:
-        load_file(user_data)
+    user_data.load_file()
 
-        if user_data.date_list:
-            print()
-            print(user_data.diff_to_string())
-            print()
+    if user_data.date_list:
+        print()
+        print(user_data.diff_to_string())
+        print()
     else:
         print("Pas de fichier à charger")
 

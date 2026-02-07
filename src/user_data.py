@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+import file_utils
 
 SEPARATOR: str = "\n"
 
@@ -61,6 +62,12 @@ class UserData:
     def diff_to_string(self) -> str:
         return SEPARATOR.join(self.diff_to_list())
 
+    def load_file(self) -> None:
+        if self.append_to:
+            results = file_utils.load_file(self.append_to, self.current_date)
+            if results:
+                self.date_list = results
+
     def write_in_file(self) -> None:
         """
         Si le fichier existe, réécrit à la place des
@@ -76,18 +83,7 @@ class UserData:
             print("Nothing to save")
             return
 
-        with open(self.append_to, "a", encoding="utf-8", newline=SEPARATOR) as myfile:
-            myfile.writelines(
-                [
-                    SEPARATOR,
-                    SEPARATOR,
-                    self.format_current_date(),
-                    SEPARATOR,
-                    SEPARATOR,
-                    self.diff_to_string(),
-                    SEPARATOR,
-                ]
-            )
+        file_utils.overwrite(self.append_to, self.current_date, self.diff_to_string())
 
         print()
         print(f"Saved to {self.append_to}")
@@ -101,6 +97,3 @@ class UserData:
 
     def clear_list(self) -> None:
         self.date_list = []
-
-    def format_current_date(self) -> str:
-        return self.current_date.strftime("# %Y-%m-%d %A")

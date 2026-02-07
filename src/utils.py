@@ -1,5 +1,5 @@
 from program_exception import UserException
-from datetime import datetime
+from datetime import date, datetime
 
 
 def to_datetime(_str: str, pattern: str) -> datetime | None:
@@ -7,6 +7,10 @@ def to_datetime(_str: str, pattern: str) -> datetime | None:
         return datetime.strptime(_str, pattern)
     except ValueError:
         return None
+
+
+def format_current_date(current_date: date) -> str:
+    return current_date.strftime("# %Y-%m-%d %A")
 
 
 def text_to_datetime(_str: str) -> datetime:

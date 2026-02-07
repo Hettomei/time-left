@@ -6,6 +6,8 @@ from user_data import UserData
 from datetime import date, datetime, timedelta
 from main import text_to_datetime
 
+import tempfile
+
 
 def test_change_date():
     user_data = UserData()
@@ -55,3 +57,18 @@ def test_diff_to_list_v2():
         "18:00:00 - 01:00:00  07:00:00  07:00:00",
         "15:00:00 - 08:00:00  17:00:00  1 day, 00:00:00",
     ]
+
+
+def test_load_file_when_file_load_data():
+    a = tempfile.NamedTemporaryFile(delete=False)
+    u = UserData(a.name)
+    u.append(text_to_datetime("8h"), text_to_datetime("9"))
+    u.append(text_to_datetime("10m"), text_to_datetime("20m"))
+    u.write_in_file()
+
+    u.clear_list()
+    u.load_file()
+    assert len(u.date_list) == 2
+
+    assert u.date_list[0] == [text_to_datetime("8h"), text_to_datetime("9h")]
+    assert u.date_list[1] == [text_to_datetime("10m"), text_to_datetime("20m")]
