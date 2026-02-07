@@ -86,7 +86,6 @@ d   : supprime la derniere ligne
 cd  : change la date relative à la date du jour. ex: -1
 q
 C-c : quitte l'app
-l   : load file
 
 valeurs
 -------
