@@ -1,4 +1,5 @@
 from utils import text_to_datetime, format_current_date
+from program_exception import UserException
 
 import re
 from datetime import date, datetime, timedelta
@@ -7,7 +8,7 @@ import tempfile, shutil
 
 SEPARATOR: str = "\n"
 
-extract_delta = re.compile(r"^(\S+) - (\S+)")
+extract_delta = re.compile(r"^(.+?) - (.+?) ")
 
 
 def create_temporary_copy(path):
@@ -45,12 +46,16 @@ def load_file(filepath: Path, current_date: date):
                 deltas = extract_delta.match(s_line.rstrip())
                 if deltas:
                     # print("g1:" + deltas.group(1) + " -- g2:" + deltas.group(2))
-                    date_list.append(
-                        [
-                            text_to_datetime(deltas.group(1)),
-                            text_to_datetime(deltas.group(2)),
-                        ]
-                    )
+                    try:
+                        date_list.append(
+                            [
+                                text_to_datetime(deltas.group(1)),
+                                text_to_datetime(deltas.group(2)),
+                            ]
+                        )
+                    except UserException as ue:
+                        print("Problem at <" + s_line.rstrip() + "> " + str(ue))
+
                 else:
                     # plus rien a faire, on quitte la fonction
                     break
