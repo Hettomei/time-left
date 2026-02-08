@@ -2,13 +2,23 @@ from utils import text_to_datetime, format_current_date
 
 import re
 from datetime import date, datetime, timedelta
+from pathlib import Path
+import tempfile, shutil
 
 SEPARATOR: str = "\n"
 
 extract_delta = re.compile(r"^(\S+) - (\S+)")
 
 
-def load_file(filepath: str, current_date: date):
+def create_temporary_copy(path):
+    with tempfile.NamedTemporaryFile(
+        prefix="time_left_", suffix="_" + str(path), delete=False
+    ) as tmp:
+        shutil.copy2(path, tmp.name)
+        return tmp.name
+
+
+def load_file(filepath: Path, current_date: date):
     """
     Tente de charger les valeurs présente dans un fichier
     Cette fonction ne leve pas d erreur
@@ -48,23 +58,75 @@ def load_file(filepath: str, current_date: date):
     return date_list
 
 
-def overwrite(filepath: str, current_date: date, data: str):
+def overwrite(targetfile: Path, current_date: date, data: str):
     """
-    si il trouve la ligne,
-    réécrit à la place des lignes existantes
+    Copier le fichier
+    prendre la copie et le lire
+    prendre le fichier initiale
+    ajouter ligne par ligne le fichier copié
+    quand j arrive au point interessant, le remplacer
+    remettre toute la fin
+
     sinon, l ajoute à la fin
     """
-    with open(filepath, "a", encoding="utf-8", newline=SEPARATOR) as myfile:
-        myfile.writelines(
-            [
-                SEPARATOR,
-                SEPARATOR,
-                format_current_date(current_date),
-                SEPARATOR,
-                SEPARATOR,
-                data,
-                SEPARATOR,
-            ]
-        )
+    copy__file = create_temporary_copy(targetfile)
+    date_title = format_current_date(current_date)
+    state = "nothing"
+    print("save copy at " + copy__file)
 
-    # on recherche la string, on la trouve
+    with (
+        open(targetfile, "w", encoding="utf-8", newline=SEPARATOR) as target,
+        open(copy__file, "r", encoding="utf-8", newline=SEPARATOR) as copy,
+    ):
+        for line in copy:
+            # d abord on cherche le titre de la section
+            if state == "nothing":
+                if line.rstrip() == date_title:
+                    state = "write_new_data"
+                else:
+                    target.write(line)
+
+            if state == "write_new_data":
+                # on ecrit le titre,
+                # on saute une ligne
+                # on ecrit les data
+                # on saute une ligne
+                target.write(date_title)
+                target.write(SEPARATOR)
+                target.write(SEPARATOR)
+                for d in data:
+                    target.write(d)
+                    target.write(SEPARATOR)
+                state = "find_delta_or_copy_line"
+                continue
+
+            # ensuite on cherche un timedelta
+            if state == "find_delta_or_copy_line":
+                if extract_delta.match(line.rstrip()):
+                    # tous les delta doivent etre consecutif, donc il faut un mode special
+                    state = "delete_delta"
+                elif line.rstrip():
+                    # tout ce qui n est pas date et heure, on l ecrit
+                    target.write(line)
+
+            if state == "delete_delta":
+                if extract_delta.match(line.rstrip()):
+                    # print("delete: " + line.rstrip())
+                    continue
+                else:
+                    # tous les delta doivent etre consecutif
+                    # si on arrive ici, c est qu il n y en a plus
+                    state = "continue_import"
+
+            # A partir d ici, on copy tout
+            if state == "continue_import":
+                target.write(line)
+
+        # si on arrive ici, c'est qu il n a pas trouvé de ligne, on ajoute
+        if state == "nothing":
+            target.write(date_title)
+            target.write(SEPARATOR)
+            target.write(SEPARATOR)
+            for d in data:
+                target.write(d)
+                target.write(SEPARATOR)

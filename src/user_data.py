@@ -2,6 +2,7 @@ import file_utils
 
 from datetime import date, datetime, timedelta
 from utils import format_datetime, format_timedelta
+from pathlib import Path
 
 SEPARATOR: str = "\n"
 
@@ -39,12 +40,13 @@ class UserData:
 
         return lines
 
-    def diff_to_string(self) -> str:
-        return SEPARATOR.join(self.diff_to_list())
+    def print_list(self) -> str:
+        for l in self.diff_to_list():
+            print(l)
 
     def load_file(self) -> None:
         if self.append_to:
-            results = file_utils.load_file(self.append_to, self.current_date)
+            results = file_utils.load_file(Path(self.append_to), self.current_date)
             if results:
                 self.date_list = results
 
@@ -61,9 +63,11 @@ class UserData:
             print("Nothing to save")
             return
 
-        file_utils.overwrite(self.append_to, self.current_date, self.diff_to_string())
         print()
-        print(f"Saved to {self.append_to}")
+        file_utils.overwrite(
+            Path(self.append_to), self.current_date, self.diff_to_list()
+        )
+        print(f"saved to {self.append_to}")
 
     def change_date(self, relative: str) -> None:
         """
@@ -71,6 +75,7 @@ class UserData:
         """
         change_days = int(relative)
         self.current_date = self.current_date + timedelta(days=change_days)
+        self.load_file()
 
     def clear_list(self) -> None:
         self.date_list = []

@@ -28,14 +28,18 @@ def parse_args(args):
 
 
 def init_data(user_data: UserData) -> None:
+    if not user_data.append_to:
+        print("Pas de fichier à charger")
+        return
+
     user_data.load_file()
 
     if user_data.date_list:
         print()
-        print(user_data.diff_to_string())
+        user_data.print_list()
         print()
     else:
-        print("Pas de fichier à charger")
+        print("Pas de data à charger")
 
 
 def read_input(user_data: UserData) -> None:
@@ -71,7 +75,7 @@ def main_loop(user_data: UserData) -> None:
         except UserException as e:
             print(f"ERROR {e}")
 
-        print(user_data.diff_to_string())
+        user_data.print_list()
         print()
 
 

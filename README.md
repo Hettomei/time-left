@@ -48,4 +48,4 @@ alias chrono="python ~/programmes/time-left/main.py -a './chiffrages.md'"
 
 # TODO
 
-- rewrite at same place
+- Nothing !
