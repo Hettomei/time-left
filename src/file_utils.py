@@ -28,6 +28,10 @@ def load_file(filepath: Path, current_date: date):
 
     state = "nothing"
     date_list: list[list[datetime]] = []
+
+    # create if didn t exist
+    open(filepath, "a", encoding="utf-8").close()
+
     with open(filepath, "r", encoding="utf-8", newline=SEPARATOR) as f:
         for s_line in f:
             # d abord on cherche le titre de la section
