@@ -9,12 +9,12 @@ import main
 
 
 def test_text_to_datetime():
-    assert format_datetime(main.text_to_datetime("10")) == "10:00:00"
-    assert format_datetime(main.text_to_datetime("11h")) == "11:00:00"
-    assert format_datetime(main.text_to_datetime("11h32  ")) == "11:32:00"
-    assert format_datetime(main.text_to_datetime("11 32")) == "11:32:00"
-    assert format_datetime(main.text_to_datetime("    12    34  ")) == "12:34:00"
-    assert format_datetime(main.text_to_datetime("    13:35  ")) == "13:35:00"
+    assert format_datetime(main.text_to_datetime("10")) == "10h"
+    assert format_datetime(main.text_to_datetime("11h")) == "11h"
+    assert format_datetime(main.text_to_datetime("11h32  ")) == "11h32"
+    assert format_datetime(main.text_to_datetime("11 32")) == "11h32"
+    assert format_datetime(main.text_to_datetime("    12    34  ")) == "12h34"
+    assert format_datetime(main.text_to_datetime("    13:35  ")) == "13h35"
     assert main.text_to_datetime("    13:35  ") == datetime(
         1900, 1, 1, hour=13, minute=35
     )

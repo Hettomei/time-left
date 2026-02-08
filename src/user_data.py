@@ -40,7 +40,7 @@ class UserData:
 
         return lines
 
-    def print_list(self) -> str:
+    def print_list(self) -> None:
         for l in self.diff_to_list():
             print(l)
 

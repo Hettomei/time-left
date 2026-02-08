@@ -17,13 +17,19 @@ def format_datetime(_datetime: datetime) -> str:
     """
     Tous les formats doivent etre utilisable par text_to_datetime
     """
-    if _datetime.second == 0:
-        return datetime.strftime(_datetime, "%Hh%M")
+    if _datetime.hour == 0 and _datetime.minute == 0 and _datetime.second == 0:
+        return datetime.strftime(_datetime, "%Hh")
 
     if _datetime.hour == 0 and _datetime.minute == 0:
         return datetime.strftime(_datetime, "%Ss")
 
-    return datetime.strftime(_datetime, "%Hh%Mm%Ss")
+    if _datetime.minute == 0 and _datetime.second == 0:
+        return datetime.strftime(_datetime, "%Hh")
+
+    if _datetime.second == 0:
+        return datetime.strftime(_datetime, "%Hh%M")
+
+    return datetime.strftime(_datetime, "%H:%M:%S")
 
 
 def format_timedelta(_timedelta: timedelta) -> str:

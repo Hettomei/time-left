@@ -13,7 +13,7 @@ extract_delta = re.compile(r"^(.+?) - (.+?) ")
 
 def create_temporary_copy(path):
     with tempfile.NamedTemporaryFile(
-        prefix="time_left_", suffix="_" + str(path), delete=False
+        prefix="time_left_", suffix="_" + path.name, delete=False
     ) as tmp:
         shutil.copy2(path, tmp.name)
         return tmp.name
@@ -63,6 +63,21 @@ def load_file(filepath: Path, current_date: date):
     return date_list
 
 
+def write_data(target, date_title, data):
+    """
+    on ecrit le titre,
+    on saute une ligne
+    on ecrit les data
+    on saute une ligne
+    """
+    target.write(date_title)
+    target.write(SEPARATOR)
+    target.write(SEPARATOR)
+    for d in data:
+        target.write(d)
+        target.write(SEPARATOR)
+
+
 def overwrite(targetfile: Path, current_date: date, data: str):
     """
     Copier le fichier
@@ -92,16 +107,7 @@ def overwrite(targetfile: Path, current_date: date, data: str):
                     target.write(line)
 
             if state == "write_new_data":
-                # on ecrit le titre,
-                # on saute une ligne
-                # on ecrit les data
-                # on saute une ligne
-                target.write(date_title)
-                target.write(SEPARATOR)
-                target.write(SEPARATOR)
-                for d in data:
-                    target.write(d)
-                    target.write(SEPARATOR)
+                write_data(target, date_title, data)
                 state = "find_delta_or_copy_line"
                 continue
 
@@ -129,9 +135,4 @@ def overwrite(targetfile: Path, current_date: date, data: str):
 
         # si on arrive ici, c'est qu il n a pas trouvé de ligne, on ajoute
         if state == "nothing":
-            target.write(date_title)
-            target.write(SEPARATOR)
-            target.write(SEPARATOR)
-            for d in data:
-                target.write(d)
-                target.write(SEPARATOR)
+            write_data(target, date_title, data)
