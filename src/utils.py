@@ -49,6 +49,21 @@ def format_timedelta(_timedelta: timedelta) -> str:
 
     return str(_timedelta)
 
+def format_timedelta2(_timedelta: timedelta) -> str:
+    negatif = _timedelta < timedelta(0)
+    delta_abs = abs(_timedelta)
+
+    total_seconds = int(delta_abs.total_seconds())
+    heures = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+
+    if minutes == 0:
+        resultat = f"{heures:02d}h"
+    else:
+        resultat = f"{heures:02d}h{minutes:02d}m"
+
+    return f"- {resultat}" if negatif else resultat
+
 
 def text_to_datetime(_str: str) -> datetime:
     result = None

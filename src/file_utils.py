@@ -140,3 +140,4 @@ def overwrite(targetfile: Path, current_date: date, data: str):
         # si on arrive ici, c'est qu il n a pas trouvé de ligne, on ajoute
         if state == "nothing":
             write_data(target, date_title, data)
+            target.write(SEPARATOR)

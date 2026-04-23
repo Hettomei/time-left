@@ -40,6 +40,18 @@ class UserData:
 
         return lines
 
+    def get_final_delta(self) -> timedelta:
+        total = timedelta()
+        lines = []
+        for tt1, tt2 in self.date_list:
+            if tt2 <= tt1:
+                # On ajoute 24h
+                tt2 = tt2 + timedelta(days=1)
+            local = tt2 - tt1
+            total = total + local
+
+        return total
+
     def print_list(self) -> None:
         for l in self.diff_to_list():
             print(l)

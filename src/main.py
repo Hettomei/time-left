@@ -6,7 +6,7 @@ import argparse
 from datetime import timedelta
 from program_exception import UserException, ForceQuitException
 from user_data import UserData
-from utils import text_to_datetime
+from utils import text_to_datetime, format_timedelta, format_timedelta2
 import sys
 
 
@@ -59,6 +59,8 @@ def read_input(user_data: UserData) -> None:
     # q: quit
     elif debut == "q":
         raise ForceQuitException("q")
+    elif debut == "rab":
+        rab_screen(user_data)
     # else: parse au mieux les data pour trouver une date
     else:
         d_debut = text_to_datetime(debut)
@@ -78,6 +80,37 @@ def main_loop(user_data: UserData) -> None:
         user_data.print_list()
         print()
 
+def print_rab(base_de_calcul: timedelta, fait: timedelta, rab_existant: timedelta) -> None:
+    print(f"sur {format_timedelta2(base_de_calcul)} manque : {format_timedelta2(base_de_calcul)} - {format_timedelta2(fait)} = {format_timedelta2(base_de_calcul - fait)} donc ")
+    print(f"rab: {format_timedelta2(rab_existant - (base_de_calcul - fait))}")
+    print()
+
+def rab_screen(user_data: UserData) -> None:
+    print(f"""
+rab : fait le calcul sur le rab
+
+format :
+-------
+8h40, 8:40, 8 40, 8, 8m, 40s
+""")
+    raw_rab = input("rab restant : ").strip()
+    print()
+    a = text_to_datetime(raw_rab)
+    delta_rab = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second)
+
+
+    delta_en_cours = user_data.get_final_delta()
+
+    delta_7h30 = timedelta(hours=7, minutes=30)
+    delta_7h00 = timedelta(hours=7)
+    print_rab(delta_7h30, delta_en_cours, delta_rab)
+    print_rab(delta_7h00, delta_en_cours, delta_rab)
+
+    raw_fait = input("deja realisé : ").strip()
+    b = text_to_datetime(raw_fait)
+    delta_fait = timedelta(hours=b.hour, minutes=b.minute, seconds=b.second)
+    print_rab(delta_7h30, delta_fait, delta_rab)
+    print_rab(delta_7h00, delta_fait, delta_rab)
 
 def help_screen(user_data: UserData) -> None:
     print(f"""
@@ -86,6 +119,7 @@ commandes
 h   : affiche l'aide
 d   : supprime la derniere ligne
 cd  : change la date relative à la date du jour. ex: -1
+rab : Affiche les different calcul de rab
 q
 C-c : quitte l'app
 
