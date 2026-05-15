@@ -9,6 +9,7 @@ import tempfile, shutil
 SEPARATOR: str = "\n"
 
 extract_delta = re.compile(r"^(.+?) - (.+?) ")
+extract_rab = re.compile(r"^rab: (.+?)$")
 
 
 def create_temporary_copy(path):
@@ -28,6 +29,7 @@ def load_file(filepath: Path, current_date: date):
 
     state = "nothing"
     date_list: list[list[datetime]] = []
+    rab_data: str = None
 
     # create if didn t exist
     open(filepath, "a", encoding="utf-8").close()
@@ -62,9 +64,15 @@ def load_file(filepath: Path, current_date: date):
 
                 else:
                     # plus rien a faire, on quitte la fonction
-                    break
+                    state = "find_rab"
+            if state == "find_rab":
+                # print("line: " + s_line.rstrip())
+                rab = extract_rab.match(s_line.rstrip())
+                if rab:
+                    rab_data = rab.group(1)
+                break
 
-    return date_list
+    return date_list, rab_data
 
 
 def write_data(target, date_title, data):

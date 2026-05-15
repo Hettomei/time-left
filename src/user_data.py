@@ -12,6 +12,7 @@ class UserData:
         self.append_to: str = append_to
         self.current_date: date = date.today()
         self.date_list: list[list[datetime]] = []
+        self.raw_rab: str = None
 
     def __str__(self) -> str:
         return f"UserData[{self.current_date}, file: {self.append_to}, date_list: {len(self.date_list)}]"
@@ -55,12 +56,15 @@ class UserData:
     def print_list(self) -> None:
         for l in self.diff_to_list():
             print(l)
+        if self.raw_rab:
+            print("rab: " + self.raw_rab);
 
     def load_file(self) -> None:
         if self.append_to:
-            results = file_utils.load_file(Path(self.append_to), self.current_date)
+            results, rab = file_utils.load_file(Path(self.append_to), self.current_date)
             if results:
                 self.date_list = results
+                self.raw_rab = rab
 
     def write_in_file(self) -> None:
         """

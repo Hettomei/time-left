@@ -93,7 +93,11 @@ format :
 -------
 8h40, 8:40, 8 40, 8, 8m, 40s
 """)
-    raw_rab = input("rab restant : ").strip()
+    if user_data.raw_rab:
+        raw_rab = user_data.raw_rab
+        print("rab restant : " + raw_rab)
+    else:
+        raw_rab = input("rab restant : ").strip()
     print()
     a = text_to_datetime(raw_rab)
     delta_rab = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second)
