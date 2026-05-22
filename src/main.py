@@ -9,6 +9,7 @@ from user_data import UserData
 from utils import text_to_datetime, format_timedelta, format_timedelta2
 import sys
 
+FRIDAY = 4
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
@@ -49,17 +50,17 @@ def read_input(user_data: UserData) -> None:
         if not user_data.delete_last():
             print("nothing to delete")
     # h: help
-    elif debut == "h":
+    elif debut == "h" or debut == "?":
         help_screen(user_data)
     # cd: change date
-    elif debut == "cd":
+    elif debut == "cd" or debut == "c":
         relative = input("nouvelle date relative  (-1, -2 ...) : ").strip()
         user_data.change_date(relative)
         print(user_data)
     # q: quit
     elif debut == "q":
         raise ForceQuitException("q")
-    elif debut == "rab":
+    elif debut == "rab" or debut == "r":
         rab_screen(user_data)
     # else: parse au mieux les data pour trouver une date
     else:
@@ -95,9 +96,9 @@ format :
 """)
     if user_data.raw_rab:
         raw_rab = user_data.raw_rab
-        print("rab restant : " + raw_rab)
+        print("rab disponible : " + raw_rab)
     else:
-        raw_rab = input("rab restant : ").strip()
+        raw_rab = input("rab disponible : ").strip()
     print()
     a = text_to_datetime(raw_rab)
     delta_rab = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second)
@@ -107,25 +108,20 @@ format :
 
     delta_7h30 = timedelta(hours=7, minutes=30)
     delta_7h00 = timedelta(hours=7)
-    print_rab(delta_7h30, delta_en_cours, delta_rab)
-    print_rab(delta_7h00, delta_en_cours, delta_rab)
-
-    raw_fait = input("deja realisé : ").strip()
-    b = text_to_datetime(raw_fait)
-    delta_fait = timedelta(hours=b.hour, minutes=b.minute, seconds=b.second)
-    print_rab(delta_7h30, delta_fait, delta_rab)
-    print_rab(delta_7h00, delta_fait, delta_rab)
+    if user_data.current_date.weekday() == FRIDAY:
+        print_rab(delta_7h00, delta_en_cours, delta_rab)
+    else:
+        print_rab(delta_7h30, delta_en_cours, delta_rab)
 
 def help_screen(user_data: UserData) -> None:
     print(f"""
 commandes
 ---------
-h   : affiche l'aide
-d   : supprime la derniere ligne
-cd  : change la date relative à la date du jour. ex: -1
-rab : Affiche les different calcul de rab
-q
-C-c : quitte l'app
+?,h   : affiche l'aide
+d     : supprime la derniere ligne
+c,cd  : change la date relative à la date du jour. ex: -1
+r,rab : Affiche les different calcul de rab
+q,C-c : quitte l'app
 
 valeurs
 -------
