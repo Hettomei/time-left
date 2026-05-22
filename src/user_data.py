@@ -1,11 +1,11 @@
 import file_utils
 
 from datetime import date, datetime, timedelta
-from utils import format_datetime, format_timedelta
+from utils import text_to_datetime, format_datetime, format_timedelta, format_timedelta2, format_current_date
 from pathlib import Path
 
 SEPARATOR: str = "\n"
-
+FRIDAY = 4
 
 class UserData:
     def __init__(self, append_to: str = "") -> None:
@@ -54,10 +54,30 @@ class UserData:
         return total
 
     def print_list(self) -> None:
+        print(format_current_date(self.current_date))
         for l in self.diff_to_list():
             print(l)
-        if self.raw_rab:
-            print("rab: " + self.raw_rab);
+        self.print_rab()
+
+
+    def print_rab(self) -> None:
+        if not self.raw_rab:
+            return
+
+        a = text_to_datetime(self.raw_rab)
+        delta_rab = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second)
+
+
+        delta_en_cours = self.get_final_delta()
+
+        if self.current_date.weekday() == FRIDAY:
+            delta = timedelta(hours=7)
+        else:
+            delta = timedelta(hours=7, minutes=30)
+
+        print(f"rab avant: {self.raw_rab}, sur {format_timedelta2(delta)}, rab: {format_timedelta2(delta_rab - (delta - delta_en_cours))}");
+
+
 
     def load_file(self) -> None:
         if self.append_to:

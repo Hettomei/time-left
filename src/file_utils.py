@@ -29,6 +29,7 @@ def load_file(filepath: Path, current_date: date):
 
     state = "nothing"
     date_list: list[list[datetime]] = []
+    raw_rab: str = None
     rab_data: str = None
 
     # create if didn t exist
@@ -36,20 +37,25 @@ def load_file(filepath: Path, current_date: date):
 
     with open(filepath, "r", encoding="utf-8", newline=SEPARATOR) as f:
         for s_line in f:
+            clean_line = s_line.rstrip()
+            # on cherche le mot clef "rab" et on sauve la derniere ligne. toujours
+            if state != "found_datedelta" and clean_line.startswith("rab: "):
+                raw_rab = clean_line
+
             # d abord on cherche le titre de la section
-            if state == "nothing" and s_line.rstrip() == initial_date_match:
+            if state == "nothing" and clean_line == initial_date_match:
                 state = "found_date"
                 continue
 
             # ensuite on cherche un timedelta
-            if state == "found_date" and extract_delta.match(s_line.rstrip()):
+            if state == "found_date" and extract_delta.match(clean_line):
                 state = "found_datedelta"
 
             # Ici, toutes les lignes consecutive doivent matcher
             # sinon, on s arrete
             if state == "found_datedelta":
-                # print("line: " + s_line.rstrip())
-                deltas = extract_delta.match(s_line.rstrip())
+                # print("line: " + clean_line)
+                deltas = extract_delta.match(clean_line)
                 if deltas:
                     # print("g1:" + deltas.group(1) + " -- g2:" + deltas.group(2))
                     try:
@@ -60,17 +66,15 @@ def load_file(filepath: Path, current_date: date):
                             ]
                         )
                     except UserException as ue:
-                        print("Problem at <" + s_line.rstrip() + "> " + str(ue))
-
+                        print("Problem at <" + clean_line + "> " + str(ue))
                 else:
-                    # plus rien a faire, on quitte la fonction
-                    state = "find_rab"
-            if state == "find_rab":
-                # print("line: " + s_line.rstrip())
-                rab = extract_rab.match(s_line.rstrip())
-                if rab:
-                    rab_data = rab.group(1)
-                break
+                    # plus rien a faire, on quitte la fonction pour ne pas charger plus
+                    break
+
+    if raw_rab:
+        rab_match = extract_rab.match(raw_rab)
+        if rab_match:
+            rab_data = rab_match.group(1)
 
     return date_list, rab_data
 
