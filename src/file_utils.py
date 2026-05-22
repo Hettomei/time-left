@@ -79,7 +79,7 @@ def load_file(filepath: Path, current_date: date):
     return date_list, rab_data
 
 
-def write_data(target, date_title, data):
+def write_data(target, date_title, data, new_rab):
     """
     on ecrit le titre,
     on saute une ligne
@@ -92,9 +92,11 @@ def write_data(target, date_title, data):
     for d in data:
         target.write(d)
         target.write(SEPARATOR)
+    target.write(new_rab)
+    target.write(SEPARATOR)
 
 
-def overwrite(targetfile: Path, current_date: date, data: str):
+def overwrite(targetfile: Path, current_date: date, data, new_rab: str):
     """
     Copier le fichier
     prendre la copie et le lire
@@ -115,30 +117,34 @@ def overwrite(targetfile: Path, current_date: date, data: str):
         open(copy__file, "r", encoding="utf-8", newline=SEPARATOR) as copy,
     ):
         for line in copy:
+            clean_line = line.rstrip()
             # d abord on cherche le titre de la section
             if state == "nothing":
-                if line.rstrip() == date_title:
+                if clean_line == date_title:
                     state = "write_new_data"
                 else:
                     target.write(line)
 
             if state == "write_new_data":
-                write_data(target, date_title, data)
+                write_data(target, date_title, data, new_rab)
                 state = "find_delta_or_copy_line"
                 continue
 
             # ensuite on cherche un timedelta
             if state == "find_delta_or_copy_line":
-                if extract_delta.match(line.rstrip()):
+                if extract_delta.match(clean_line):
                     # tous les delta doivent etre consecutif, donc il faut un mode special
                     state = "delete_delta"
-                elif line.rstrip():
+                elif clean_line:
                     # tout ce qui n est pas date et heure, on l ecrit
                     target.write(line)
 
             if state == "delete_delta":
-                if extract_delta.match(line.rstrip()):
-                    # print("delete: " + line.rstrip())
+                if extract_delta.match(clean_line):
+                    # print("delete: " + clean_line)
+                    continue
+                if clean_line.startswith("rab: "):
+                    # print("delete: " + clean_line)
                     continue
                 else:
                     # tous les delta doivent etre consecutif
@@ -151,5 +157,5 @@ def overwrite(targetfile: Path, current_date: date, data: str):
 
         # si on arrive ici, c'est qu il n a pas trouvé de ligne, on ajoute
         if state == "nothing":
-            write_data(target, date_title, data)
+            write_data(target, date_title, data, new_rab)
             target.write(SEPARATOR)

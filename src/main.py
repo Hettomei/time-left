@@ -6,10 +6,8 @@ import argparse
 from datetime import timedelta
 from program_exception import UserException, ForceQuitException
 from user_data import UserData
-from utils import text_to_datetime, format_timedelta, format_timedelta2
+from utils import text_to_datetime, format_timedelta
 import sys
-
-FRIDAY = 4
 
 def parse_args(args):
     parser = argparse.ArgumentParser(

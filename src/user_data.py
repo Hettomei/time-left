@@ -60,22 +60,30 @@ class UserData:
         self.print_rab()
 
 
+    def today_delta_rab(self) -> None:
+        if self.current_date.weekday() == FRIDAY:
+            return timedelta(hours=7)
+        else:
+            return timedelta(hours=7, minutes=30)
+
+
     def print_rab(self) -> None:
         if not self.raw_rab:
             return
 
+        today_delta = self.today_delta_rab()
+        print(f"rab avant: {self.raw_rab}, sur {format_timedelta2(today_delta)}, {self.new_rab()}");
+
+    def new_rab(self) -> None:
+        if not self.raw_rab:
+            return ""
+
         a = text_to_datetime(self.raw_rab)
         delta_rab = timedelta(hours=a.hour, minutes=a.minute, seconds=a.second)
-
-
+        today_delta = self.today_delta_rab()
         delta_en_cours = self.get_final_delta()
 
-        if self.current_date.weekday() == FRIDAY:
-            delta = timedelta(hours=7)
-        else:
-            delta = timedelta(hours=7, minutes=30)
-
-        print(f"rab avant: {self.raw_rab}, sur {format_timedelta2(delta)}, rab: {format_timedelta2(delta_rab - (delta - delta_en_cours))}");
+        return f"rab: {format_timedelta2(delta_rab - (today_delta - delta_en_cours))}"
 
 
 
@@ -101,7 +109,7 @@ class UserData:
 
         print()
         file_utils.overwrite(
-            Path(self.append_to), self.current_date, self.diff_to_list()
+            Path(self.append_to), self.current_date, self.diff_to_list(), self.new_rab()
         )
         print(f"saved to {self.append_to}")
 
