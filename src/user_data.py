@@ -92,6 +92,7 @@ class UserData:
             results, rab = file_utils.load_file(Path(self.append_to), self.current_date)
             if results:
                 self.date_list = results
+            if rab:
                 self.raw_rab = rab
 
     def write_in_file(self) -> None:
