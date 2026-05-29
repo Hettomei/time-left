@@ -94,6 +94,8 @@ class UserData:
                 self.date_list = results
             if rab:
                 self.raw_rab = rab
+            else:
+                self.raw_rab = "00h00"
 
     def write_in_file(self) -> None:
         """
